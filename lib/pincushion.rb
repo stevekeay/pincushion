@@ -2,6 +2,14 @@ require 'set'
 require 'pincushion/plugins'
 
 module Pincushion
+  def self.validate(mod, preds)
+    violations = Set.new(preds) - mod.predicates
+    return if violations.empty?
+    fail MissingPredicateError,
+         "Tried to set a value for unregistered predicate(s): "\
+         "#{violations.inspect}"
+  end
+
   module RootModuleMethods
     include Plugins
 
@@ -26,9 +34,9 @@ module Pincushion
     end
 
     def predicates(*preds)
-      return @predicates if preds.empty?
+      return (@predicates || Set.new) if preds.empty?
       fail "Predicates can't be changed after initialization" if @predicates
-      @predicates = Set.new preds
+      @predicates = Set.new(preds)
       is_not(*@predicates)
       @predicates.each do |predicate|
         alias_method(:"is_#{predicate}?", :"#{predicate}?")
@@ -53,11 +61,13 @@ module Pincushion
     end
 
     def is(*preds)
+      Pincushion.validate(predicate_pincushion_root, preds)
       preds.each { |pred| define_method(:"#{pred}?") { true } }
       self
     end
 
     def is_not(*preds)
+      Pincushion.validate(predicate_pincushion_root, preds)
       preds.each { |pred| define_method(:"#{pred}?") { false } }
       self
     end
@@ -76,6 +86,7 @@ module Pincushion
     end
 
     def that_are(*preds)
+      Pincushion.validate(self, preds)
       mod = Module.new
       mod.include self
       mod.is(*preds)
@@ -83,6 +94,7 @@ module Pincushion
     end
 
     def that_is(*preds)
+      Pincushion.validate(self, preds)
       klass = Class.new
       klass.include self
       klass.is(*preds)
