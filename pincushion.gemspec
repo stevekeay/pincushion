@@ -3,7 +3,7 @@ require 'pincushion/version'
 
 Gem::Specification.new do |s|
   s.name        = 'pincushion'
-  s.version     = Pincushion.version
+  s.version     = Pincushion::VERSION
   s.summary     = 'Predicate-centric classification toolkit'
   s.authors     = ['Ben Miller']
   s.email       = 'bmiller@rackspace.com'
@@ -14,5 +14,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '~>2.0'
 
-  s.add_development_dependency 'rspec', '~>3.0'
+  s.add_development_dependency "bundler", "~> 1.0"
+  s.add_development_dependency "rake", "~> 10.0"
+  s.add_development_dependency "minitest", "~> 5.0"
 end

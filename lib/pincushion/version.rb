@@ -1,5 +1,3 @@
 module Pincushion
-  def self.version
-    '0.0.1'
-  end
+  VERSION = '0.0.1'
 end # module Pincushion
