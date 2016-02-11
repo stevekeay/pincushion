@@ -22,10 +22,11 @@ module Pincushion
       }.freeze
 
       module RootModuleMethods
-        def to_csv(*args, **kwargs)
-          kwargs[:headers] ||= [:identifier, *predicates]
+        def to_csv(*args)
+          args << {} unless args.last.is_a?(Hash)
+          args.last[:headers] ||= [:identifier, *predicates]
 
-          CSV.generate(*args, **kwargs) do |csv|
+          CSV.generate(*args) do |csv|
             rows.each { |row| csv << row }
           end
         end
