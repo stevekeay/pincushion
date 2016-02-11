@@ -1,9 +1,31 @@
 require "spec_helper"
+require "json"
 require "pincushion"
 require "pincushion/version"
 
 describe Pincushion do
   let(:klass) { Pincushion }
+
+  let(:animal_data) do
+    [
+      { identifier: "Mee-mow", carnivore: true, herbivore: false },
+      { identifier: "Jake", carnivore: true, herbivore: true },
+      { identifier: "B-Mo", carnivore: false, herbivore: false }
+    ]
+  end
+
+  let(:animal_data_csv) do
+    "identifier,carnivore,herbivore\n"\
+    "Mee-mow,true,false\n"\
+    "Jake,true,true\n"\
+    "B-Mo,false,false\n"
+  end
+
+  let(:animal_data_json) do
+    "[{\"identifier\":\"Mee-mow\",\"carnivore\":true,\"herbivore\":false},"\
+    "{\"identifier\":\"Jake\",\"carnivore\":true,\"herbivore\":true},"\
+    "{\"identifier\":\"B-Mo\",\"carnivore\":false,\"herbivore\":false}]"
+  end
 
   it "has a version number" do
     refute_nil ::Pincushion::VERSION
@@ -50,5 +72,24 @@ describe Pincushion do
     assert_raises Pincushion::MissingPredicateError do
       animals.that_is(:carnivore)
     end
+  end
+
+  it "round-trips to and from arrays of hashes" do
+    animals = Pincushion.from_rows(animal_data)
+    assert_equal animals.rows, animal_data
+  end
+
+  it "round-trips CSV with the csv_serializer plugin" do
+    Pincushion.plugin :csv_serializer
+    animals = Pincushion.from_csv(animal_data_csv)
+    animals.plugin :csv_serializer
+    assert_equal animals.to_csv(write_headers: true), animal_data_csv
+  end
+
+  it "round-trips JSON with the json_serializer plugin" do
+    Pincushion.plugin :json_serializer
+    animals = Pincushion.from_json(animal_data_json)
+    animals.plugin :json_serializer
+    assert_equal animals.to_json, animal_data_json
   end
 end

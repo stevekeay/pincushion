@@ -2,6 +2,26 @@ require 'set'
 require 'pincushion/plugins'
 
 module Pincushion
+  def self.from_rows(rows)
+    Module.new.module_eval do
+      include Pincushion
+
+      predicates = rows
+                   .reduce(Set.new) { |a, e| a.merge(e.keys) }
+                   .delete(:identifier)
+      predicates(*predicates)
+
+      rows.each do |row|
+        row = row.dup
+        identifier = row.delete(:identifier)
+        true_predicates = row.each_pair.select { |_, v| v }.map { |k, _| k }
+        that_is(*true_predicates).named(identifier)
+      end
+
+      self
+    end
+  end
+
   def self.validate(mod, preds)
     violations = Set.new(preds) - mod.predicates
     return if violations.empty?
@@ -15,13 +35,9 @@ module Pincushion
 
     attr_reader :identifiers
 
-    def all_identifiers_predicates_hashes
-      identifiers.map { |k, v| [k, v.all_predicates_hash] }.to_h
-    end
-
-    def all_identifiers_predicates_rows
-      identifiers.flat_map do |id, cls|
-        cls.new(id).all_predicates_hash.map { |k, v| [id, k, v] }
+    def rows
+      identifiers.map do |id, cls|
+        { identifier: id }.merge(cls.new(id).all_predicates_hash)
       end
     end
 
