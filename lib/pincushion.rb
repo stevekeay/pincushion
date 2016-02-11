@@ -69,7 +69,7 @@ module Pincushion
 
     def all_predicates_hash
       obj = new ""
-      predicate_pincushion_root.predicates.map { |p| [p, obj.is?(p)] }.to_h
+      Hash[predicate_pincushion_root.predicates.map { |p| [p, obj.is?(p)] }]
     end
 
     def identifiers
@@ -103,16 +103,16 @@ module Pincushion
 
     def that_are(*preds)
       Pincushion.validate(self, preds)
-      mod = Module.new
-      mod.include self
+      base = self
+      mod = Module.new { include base }
       mod.is(*preds)
       mod
     end
 
     def that_is(*preds)
       Pincushion.validate(self, preds)
-      klass = Class.new
-      klass.include self
+      base = self
+      klass = Class.new { include base }
       klass.is(*preds)
       klass
     end
@@ -141,7 +141,7 @@ module Pincushion
     end
 
     def all_predicates_hash
-      all_predicates.map { |p| [p, is?(p)] }.to_h
+      Hash[all_predicates.map { |p| [p, is?(p)] }]
     end
 
     def is(*preds)

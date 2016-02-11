@@ -4,7 +4,7 @@ module Pincushion
   def self.from_csv(csv, *args)
     args << {} unless args.last.is_a?(Hash)
     args.last.merge!(Plugins::CsvSerializer::OPTS)
-    from_rows(CSV.parse(csv, *args).map(&:to_h))
+    from_rows(CSV.parse(csv, *args).map(&:to_hash))
   end
 
   module Plugins

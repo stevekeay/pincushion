@@ -32,8 +32,7 @@ describe Pincushion do
   end
 
   it "can be used to define a category with properties" do
-    animals = Module.new
-    animals.include Pincushion
+    animals = Module.new { include Pincushion }
     animals.predicates :carnivore, :herbivore
     cat = animals.that_is(:carnivore).named("Mee-mow")
     mittens = animals.find("Mee-mow")
@@ -43,8 +42,7 @@ describe Pincushion do
   end
 
   it "doesn't allow unregistered predicates" do
-    animals = Module.new
-    animals.include Pincushion
+    animals = Module.new { include Pincushion }
     animals.predicates :herbivore
 
     assert_raises Pincushion::MissingPredicateError do
@@ -67,8 +65,7 @@ describe Pincushion do
   end
 
   it "doesn't allow unregistered predicates (empty set)" do
-    animals = Module.new
-    animals.include Pincushion
+    animals = Module.new { include Pincushion }
     assert_raises Pincushion::MissingPredicateError do
       animals.that_is(:carnivore)
     end
