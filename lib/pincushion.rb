@@ -102,7 +102,7 @@ module Pincushion
     end
 
     def that_are(*preds)
-      Pincushion.validate(self, preds)
+      Pincushion.validate(predicate_pincushion_root, preds)
       base = self
       mod = Module.new { include base }
       mod.is(*preds)
@@ -110,7 +110,7 @@ module Pincushion
     end
 
     def that_is(*preds)
-      Pincushion.validate(self, preds)
+      Pincushion.validate(predicate_pincushion_root, preds)
       base = self
       klass = Class.new { include base }
       klass.is(*preds)
