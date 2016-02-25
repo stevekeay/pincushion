@@ -54,9 +54,6 @@ module Pincushion
       fail "Predicates can't be changed after initialization" if @predicates
       @predicates = Set.new(preds)
       is_not(*@predicates)
-      @predicates.each do |predicate|
-        alias_method(:"is_#{predicate}?", :"#{predicate}?")
-      end
     end
   end # module RootModuleMethods
 

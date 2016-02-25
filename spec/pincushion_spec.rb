@@ -92,4 +92,19 @@ describe Pincushion do
     animals.plugin :json_serializer
     assert_equal animals.to_json, animal_data_json
   end
+
+  it "creates question-mark methods, not is-methods" do
+    animals = Module.new { include Pincushion }
+    animals.predicates :herbivore
+    elephants = animals.that_is(:herbivore)
+    assert elephants.new("").herbivore?
+
+    assert_raises(NoMethodError) do
+      elephants.new("").is_herbivore
+    end
+
+    assert_raises(NoMethodError) do
+      elephants.new("").is_herbivore?
+    end
+  end
 end
