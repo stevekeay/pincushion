@@ -1,10 +1,9 @@
 require 'csv'
 
 module Pincushion
-  def self.from_csv(csv, *args)
-    args << {} unless args.last.is_a?(Hash)
-    args.last.merge!(Plugins::CsvSerializer::OPTS)
-    from_rows(CSV.parse(csv, *args).map(&:to_hash))
+  def self.from_csv(csv, opts = {})
+    opts = opts.merge(Plugins::CsvSerializer::OPTS)
+    from_rows(CSV.parse(csv, **opts).map(&:to_hash))
   end
 
   module Plugins
@@ -22,11 +21,10 @@ module Pincushion
       }.freeze
 
       module RootModuleMethods
-        def to_csv(*args)
-          args << {} unless args.last.is_a?(Hash)
-          args.last[:headers] ||= [:identifier, *predicates]
+        def to_csv(opts)
+          opts[:headers] ||= [:identifier, *predicates]
 
-          CSV.generate(*args) do |csv|
+          CSV.generate(**opts) do |csv|
             rows.each { |row| csv << row }
           end
         end
