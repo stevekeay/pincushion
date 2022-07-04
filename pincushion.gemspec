@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.files       = Dir['{spec,lib}/**/*.{rb,yaml}']
   s.test_files  = Dir['spec/**/*.{rb,yaml}']
 
-  s.required_ruby_version = '~>2.0'
+  s.required_ruby_version = '>=2.0'
 
   s.add_development_dependency "bundler", "~> 1.0"
   s.add_development_dependency "rake", "~> 10.0"
