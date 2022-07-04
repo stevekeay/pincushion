@@ -46,7 +46,7 @@ describe Pincushion do
     animals.predicates :herbivore
 
     elephants = animals.that_are(:herbivore)
-    tiny_elephants = elephants.that_is.named("Tree Trunks")
+    elephants.that_is.named("Tree Trunks")
 
     assert_raises Pincushion::MissingPredicateError do
       animals.that_is(:carnivore)
